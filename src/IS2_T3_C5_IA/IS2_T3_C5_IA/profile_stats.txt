@@ -1,0 +1,17 @@
+         1351 function calls in 0.001 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+       50    0.000    0.000    0.000    0.000 C:\Users\Gonza\Desktop\tps\IS2\repo\IS2\src\IS2_T3_C5_IA\IS2_T3_C5_IA\backlog_calculator.py:100(select_plan)
+      300    0.000    0.000    0.000    0.000 C:\Users\Gonza\Desktop\tps\IS2\repo\IS2\src\IS2_T3_C5_IA\IS2_T3_C5_IA\backlog_calculator.py:80(compute_score)
+       50    0.000    0.000    0.000    0.000 {built-in method builtins.sorted}
+      150    0.000    0.000    0.000    0.000 C:\Users\Gonza\Desktop\tps\IS2\repo\IS2\src\IS2_T3_C5_IA\IS2_T3_C5_IA\backlog_calculator.py:110(<lambda>)
+      300    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+      150    0.000    0.000    0.000    0.000 {method 'get' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+      100    0.000    0.000    0.000    0.000 {method 'append' of 'list' objects}
+      100    0.000    0.000    0.000    0.000 {method 'add' of 'set' objects}
+      150    0.000    0.000    0.000    0.000 C:\Users\Gonza\Desktop\tps\IS2\repo\IS2\src\IS2_T3_C5_IA\IS2_T3_C5_IA\backlog_calculator.py:118(<genexpr>)
+
+

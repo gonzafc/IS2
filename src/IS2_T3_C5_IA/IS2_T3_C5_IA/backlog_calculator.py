@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from typing import List, Dict, Any, Optional
 import json
 import argparse
+import sys
+from json import JSONDecodeError
 
 
 @dataclass(frozen=True)
@@ -51,8 +53,13 @@ def load_backlog(path: str) -> Dict[str, Any]:
     Expected JSON structure:
     {"budget": 10, "items": [{"id": "A", "value": 5, "effort": 2, "risk": 1, "deps": "B"}, ...]}
     """
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except FileNotFoundError as e:
+        raise ValueError(f"Backlog file not found: {path}") from e
+    except JSONDecodeError as e:
+        raise ValueError(f"Backlog file is not valid JSON: {path}") from e
 
     budget = float(data.get("budget", 0))
     items_raw = data.get("items", [])
@@ -91,13 +98,23 @@ def compute_score(item: BacklogItem) -> float:
 
 
 def select_plan(items: List[BacklogItem], budget: float) -> List[BacklogItem]:
-    """Greedy planner: sort by score descending, pick items whose deps are satisfied and fit the budget."""
-    scored = sorted(items, key=compute_score, reverse=True)
+    """Greedy planner optimized: compute scores once and sort using them.
+
+    This reduces repeated score calculations when the scoring function is
+    non-trivial. Maintains the same selection logic (deps must be satisfied)
+    and budget constraint.
+    """
+    # Precompute scores to avoid repeated computation
+    scores = {it.id: compute_score(it) for it in items}
+    # Sort items by precomputed score (fall back to id for stability)
+    scored = sorted(items, key=lambda it: (scores.get(it.id, float("-inf")), it.id), reverse=True)
+
     chosen: List[BacklogItem] = []
     spent = 0.0
     chosen_ids = set()
 
     for it in scored:
+        # Fast dependency check using set
         if not all(d in chosen_ids for d in it.deps):
             continue
         if spent + it.effort <= budget:
@@ -132,6 +149,7 @@ def main(argv: Optional[List[str]] = None) -> None:
     """CLI entrypoint.
 
     Parse arguments from argv (or sys.argv when None) and print JSON plan to stdout.
+    Errors are reported to stderr and the process exits with a non-zero code.
     """
     parser = argparse.ArgumentParser(
         description="Calculate backlog plan within a budget"
@@ -139,8 +157,12 @@ def main(argv: Optional[List[str]] = None) -> None:
     parser.add_argument("path", help="Path to backlog JSON file")
     args = parser.parse_args(argv)
 
-    plan = plan_from_file(args.path)
-    print(json.dumps(plan, ensure_ascii=False))
+    try:
+        plan = plan_from_file(args.path)
+        print(json.dumps(plan, ensure_ascii=False))
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":
