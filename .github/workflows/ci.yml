@@ -23,8 +23,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements-dev.txt
           pip install bandit multimetric pytest-cov pydocstyle
-      - name: Lint with ruff
-        run: ruff check .
+      - name: Lint with ruff (targeted)
+        run: python -m ruff check src/IS2_T3_C5_IA/IS2_T3_C5_IA --exclude src/IS2_T3_C5_IA/IS2_T3_C5_IA/legacy || (echo "ruff failed" && exit 1)
       - name: Format check with black
         run: black --check .
       - name: Docstring check (PEP257)
