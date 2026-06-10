@@ -1,4 +1,3 @@
-import json
 import pytest
 from backlog_calculator import load_backlog, main
 
