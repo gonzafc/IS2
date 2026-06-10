@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "is2-backlog"
+version = "0.1.0"
+description = "Backlog prioritization utilities (refactor)"
+readme = "README.md"
+authors = [{name = "Gonzalo Romero"}]
+
+[tool.black]
+line-length = 88
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-q"

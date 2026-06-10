@@ -1,0 +1,1 @@
+@echo off\npython -m pytest --maxfail=1 --disable-warnings -q\n

@@ -1,5 +1,11 @@
 import json
-from backlog_calculator import parse_deps, BacklogItem, compute_score, select_plan, plan_from_file
+from backlog_calculator import (
+    parse_deps,
+    BacklogItem,
+    compute_score,
+    select_plan,
+    plan_from_file,
+)
 
 
 def test_parse_deps_string():
@@ -44,3 +50,32 @@ def test_plan_from_file(tmp_path):
     out = plan_from_file(str(p))
     assert isinstance(out, list)
     assert [d["id"] for d in out] == ["B", "A"]
+
+
+def test_parse_deps_other():
+    assert parse_deps(123) == ["123"]
+
+
+def test_load_backlog_defaults(tmp_path):
+    data = {"budget": 1, "items": [{"id": "X"}, {"id": "Y", "deps": ["X"]}]}
+    p = tmp_path / "defaults.json"
+    p.write_text(json.dumps(data))
+    from backlog_calculator import load_backlog
+
+    d = load_backlog(str(p))
+    assert d["budget"] == 1.0
+    assert len(d["items"]) == 2
+    assert d["items"][0].value == 0.0
+    assert d["items"][0].effort == 1.0
+    assert d["items"][1].deps == ["X"]
+
+
+def test_main_cli(tmp_path, capsys):
+    data = {"budget": 5, "items": [{"id": "B", "value": 5, "effort": 2}]}
+    p = tmp_path / "cli.json"
+    p.write_text(json.dumps(data))
+    from backlog_calculator import main
+
+    main([str(p)])
+    captured = capsys.readouterr()
+    assert "B" in captured.out
