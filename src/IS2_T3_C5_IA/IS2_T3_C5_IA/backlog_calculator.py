@@ -35,7 +35,6 @@ class BacklogItem:
     deps: List[str]
 
 
-
 def parse_deps(raw: Any) -> List[str]:
     """Normalize dependencies field into a list of strings."""
     if raw is None:
@@ -107,7 +106,9 @@ def select_plan(items: List[BacklogItem], budget: float) -> List[BacklogItem]:
     # Precompute scores to avoid repeated computation
     scores = {it.id: compute_score(it) for it in items}
     # Sort items by precomputed score (fall back to id for stability)
-    scored = sorted(items, key=lambda it: (scores.get(it.id, float("-inf")), it.id), reverse=True)
+    scored = sorted(
+        items, key=lambda it: (scores.get(it.id, float("-inf")), it.id), reverse=True
+    )
 
     chosen: List[BacklogItem] = []
     spent = 0.0

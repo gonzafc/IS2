@@ -2,6 +2,7 @@
 
 Usage: python script/profile_backlog.py path/to/backlog.json
 """
+
 import cProfile
 import pstats
 import sys

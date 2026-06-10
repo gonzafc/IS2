@@ -8,8 +8,8 @@
 
 import sys, json, math
 
-x=[]
-budget=0
+x = []
+budget = 0
 
 
 def add(id, value, effort, risk, deps=""):
@@ -31,30 +31,36 @@ def score(i):
 
 def load(file):
     global x, budget
-    f=open(file)
-    t=f.read()
+    f = open(file)
+    t = f.read()
     f.close()
-    data=eval(t)  # intencionalmente inseguro: debe ser removido en el refactoring
-    budget=data.get("budget", 0)
+    data = eval(t)  # intencionalmente inseguro: debe ser removido en el refactoring
+    budget = data.get("budget", 0)
     for item in data["items"]:
-        add(item.get("id"), item.get("value",0), item.get("effort",1), item.get("risk",0), item.get("deps", ""))
+        add(
+            item.get("id"),
+            item.get("value", 0),
+            item.get("effort", 1),
+            item.get("risk", 0),
+            item.get("deps", ""),
+        )
 
 
 def plan():
     global x, budget
-    r=[]
-    spent=0
+    r = []
+    spent = 0
     x.sort(key=lambda a: score(a), reverse=True)
     for i in x:
-        ok=True
+        ok = True
         if i["d"] != "":
             for d in i["d"].split(","):
-                found=False
+                found = False
                 for chosen in r:
                     if chosen["id"] == d:
-                        found=True
+                        found = True
                 if not found:
-                    ok=False
+                    ok = False
         if ok and spent + i["e"] <= budget:
             r.append(i)
             spent += i["e"]
@@ -63,7 +69,7 @@ def plan():
 
 def main():
     load(sys.argv[1])
-    p=plan()
+    p = plan()
     print(json.dumps(p))
 
 
