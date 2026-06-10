@@ -15,11 +15,23 @@ import argparse
 
 @dataclass(frozen=True)
 class BacklogItem:
+    """Representación inmutable de un ítem del backlog.
+
+    Atributos:
+        id: Identificador del ítem.
+        value: Valor estimado del ítem.
+        effort: Esfuerzo estimado (unidades de capacidad).
+        risk: Riesgo estimado (escala 0..n).
+        deps: Lista de ids de ítems de los que depende.
+
+    """
+
     id: str
     value: float
     effort: float
     risk: float
     deps: List[str]
+
 
 
 def parse_deps(raw: Any) -> List[str]:
@@ -96,7 +108,10 @@ def select_plan(items: List[BacklogItem], budget: float) -> List[BacklogItem]:
 
 
 def plan_from_file(path: str) -> List[Dict[str, Any]]:
-    """Convenience API: load file and return serializable plan with original short keys."""
+    """Load a file and return a serializable plan with original short keys.
+
+    This is a convenience wrapper that delegates to load_backlog and select_plan.
+    """
     data = load_backlog(path)
     budget = data["budget"]
     items: List[BacklogItem] = data["items"]
@@ -114,6 +129,10 @@ def plan_from_file(path: str) -> List[Dict[str, Any]]:
 
 
 def main(argv: Optional[List[str]] = None) -> None:
+    """CLI entrypoint.
+
+    Parse arguments from argv (or sys.argv when None) and print JSON plan to stdout.
+    """
     parser = argparse.ArgumentParser(
         description="Calculate backlog plan within a budget"
     )

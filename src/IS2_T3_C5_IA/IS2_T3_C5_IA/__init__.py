@@ -1,4 +1,4 @@
-"""IS2_T3_C5_IA package
+"""IS2_T3_C5_IA package.
 
 Expose public API and package version.
 """

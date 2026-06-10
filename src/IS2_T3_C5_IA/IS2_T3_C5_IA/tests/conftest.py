@@ -1,3 +1,4 @@
+"""Pytest conftest for setting up import path for tests."""
 import sys
 from pathlib import Path
 
