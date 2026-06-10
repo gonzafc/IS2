@@ -1,0 +1,26 @@
+{
+  "budget": 8,
+  "items": [
+    {
+      "id": "foundation",
+      "business_value": 20,
+      "effort": 2,
+      "technical_risk": 0.1,
+      "dependencies": []
+    },
+    {
+      "id": "checkout",
+      "business_value": 100,
+      "effort": 3,
+      "technical_risk": 0.3,
+      "dependencies": ["foundation"]
+    },
+    {
+      "id": "reporting",
+      "business_value": 40,
+      "effort": 6,
+      "technical_risk": 0.2,
+      "dependencies": []
+    }
+  ]
+}
