@@ -164,6 +164,12 @@ def main(argv: Optional[List[str]] = None) -> None:
     parser.add_argument("path", nargs="?", default="-", help="Path to backlog JSON file or '-' to read JSON from stdin")
     args = parser.parse_args(argv)
 
+    # If the user requested stdin ('-' default) but nothing is piped, avoid blocking.
+    if args.path == "-" and sys.stdin.isatty():
+        parser.print_help()
+        print("\nNo input detected on stdin. Provide a file path or pipe JSON and use '-'.", file=sys.stderr)
+        sys.exit(2)
+
     try:
         # plan_from_file delegates to load_backlog which now supports stdin when path is '-'
         plan = plan_from_file(args.path)
