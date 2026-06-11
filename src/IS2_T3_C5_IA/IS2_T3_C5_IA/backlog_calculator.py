@@ -46,19 +46,25 @@ def parse_deps(raw: Any) -> List[str]:
     return [str(raw)]
 
 
-def load_backlog(path: str) -> Dict[str, Any]:
-    """Load backlog JSON file and return budget and list of BacklogItem.
+def load_backlog(path: Optional[str]) -> Dict[str, Any]:
+    """Load backlog JSON from a file or stdin and return budget and list of BacklogItem.
 
-    Expected JSON structure:
+    If path is None or '-' the JSON is read from stdin. Expected JSON structure:
     {"budget": 10, "items": [{"id": "A", "value": 5, "effort": 2, "risk": 1, "deps": "B"}, ...]}
     """
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        if path is None or path == "-":
+            # Read JSON from stdin
+            raw = sys.stdin.read()
+            data = json.loads(raw)
+        else:
+            with open(path, "r", encoding="utf-8") as f:
+                data = json.load(f)
     except FileNotFoundError as e:
         raise ValueError(f"Backlog file not found: {path}") from e
     except JSONDecodeError as e:
-        raise ValueError(f"Backlog file is not valid JSON: {path}") from e
+        source = "stdin" if path in (None, "-") else path
+        raise ValueError(f"Backlog file is not valid JSON: {source}") from e
 
     budget = float(data.get("budget", 0))
     items_raw = data.get("items", [])
@@ -155,10 +161,11 @@ def main(argv: Optional[List[str]] = None) -> None:
     parser = argparse.ArgumentParser(
         description="Calculate backlog plan within a budget"
     )
-    parser.add_argument("path", help="Path to backlog JSON file")
+    parser.add_argument("path", nargs="?", default="-", help="Path to backlog JSON file or '-' to read JSON from stdin")
     args = parser.parse_args(argv)
 
     try:
+        # plan_from_file delegates to load_backlog which now supports stdin when path is '-'
         plan = plan_from_file(args.path)
         print(json.dumps(plan, ensure_ascii=False))
     except Exception as e:
