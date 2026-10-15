@@ -1,0 +1,28 @@
+# Entornos virtuales
+venv/
+.venv/
+env/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Testing y Cobertura
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Type checking y linters
+.mypy_cache/
+.pyright/
+.ruff_cache/
+
+# Documentacion generada
+docs/_build/
+site/
+
+# Build y distribucion
+dist/
+build/
+*.egg-info/
